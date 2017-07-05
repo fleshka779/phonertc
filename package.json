@@ -1,5 +1,5 @@
 {
-  "name": "phonertc",
+  "name": "com.dooble.phonertc",
   "version": "1.0.0",
   "description": "<img src=\"http://phonertc.io/images/logo_black.png\" width=\"400\">",
   "main": "index.js",
