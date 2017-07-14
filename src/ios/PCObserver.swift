@@ -7,74 +7,78 @@ class PCObserver : NSObject, RTCPeerConnectionDelegate {
         self.session = session
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        addedStream stream: RTCMediaStream!) {
+    func peerConnection(onRenegotiationNeeded peerConnection: RTCPeerConnection!) {
+        
+    }
+    
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        addedStream stream: RTCMediaStream!) {
         print("PCO onAddStream.")
-            
-        dispatch_async(dispatch_get_main_queue()) {
+        
+        DispatchQueue.main.async {
             if stream.videoTracks.count > 0 {
-                self.session.addVideoTrack(stream.videoTracks[0] as! RTCVideoTrack)
+                self.session.addVideoTrack(videoTrack: stream.videoTracks[0] as! RTCVideoTrack)
             }
         }
         
         self.session.sendMessage(
-            "{\"type\": \"__answered\"}".dataUsingEncoding(NSUTF8StringEncoding)!)
+            message: "{\"type\": \"__answered\"}".data(using: .utf8)! /*.dataUsingEncoding(NSUTF8StringEncoding)!*/)
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        removedStream stream: RTCMediaStream!) {
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        removedStream stream: RTCMediaStream!) {
         print("PCO onRemoveStream.")
         /*
-        dispatch_async(dispatch_get_main_queue()) {
-            if stream.videoTracks.count > 0 {
-                self.session.removeVideoTrack(stream.videoTracks[0] as RTCVideoTrack)
-            }
-        }*/
+         dispatch_async(dispatch_get_main_queue()) {
+         if stream.videoTracks.count > 0 {
+         self.session.removeVideoTrack(stream.videoTracks[0] as RTCVideoTrack)
+         }
+         }*/
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        iceGatheringChanged newState: RTCICEGatheringState) {
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        iceGatheringChanged newState: RTCICEGatheringState) {
         print("PCO onIceGatheringChange. \(newState)")
         
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        iceConnectionChanged newState: RTCICEConnectionState) {
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        iceConnectionChanged newState: RTCICEConnectionState) {
         print("PCO onIceConnectionChange. \(newState)")
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        gotICECandidate candidate: RTCICECandidate!) {
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        gotICECandidate candidate: RTCICECandidate!) {
         print("PCO onICECandidate.\n  Mid[\(candidate.sdpMid)] Index[\(candidate.sdpMLineIndex)] Sdp[\(candidate.sdp)]")
-            
+        
         var jsonError: NSError?
-
-        let json: AnyObject = [
+        
+        let json = [
             "type": "candidate",
             "label": candidate.sdpMLineIndex,
             "id": candidate.sdpMid,
             "candidate": candidate.sdp
-        ]
-            
-        let data: NSData?
+            ] as [String : Any]
+        
+        let data: Data?
         do {
-            data = try NSJSONSerialization.dataWithJSONObject(json,
-                        options: NSJSONWritingOptions())
+            data = try JSONSerialization.data(withJSONObject: json,
+                                              options: JSONSerialization.WritingOptions())
         } catch let error as NSError {
             jsonError = error
-            data = nil
+            data = Data()
         }
-            
-        self.session.sendMessage(data!)
+        
+        self.session.sendMessage(message: data!)
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        signalingStateChanged stateChanged: RTCSignalingState) {
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        signalingStateChanged stateChanged: RTCSignalingState) {
         print("PCO onSignalingStateChange: \(stateChanged)")
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        didOpenDataChannel dataChannel: RTCDataChannel!) {
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        didOpen dataChannel: RTCDataChannel!) {
         print("PCO didOpenDataChannel.")
     }
     

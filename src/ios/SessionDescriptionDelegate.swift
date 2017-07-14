@@ -7,32 +7,32 @@ class SessionDescriptionDelegate : UIResponder, RTCSessionDescriptionDelegate {
         self.session = session
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        didCreateSessionDescription originalSdp: RTCSessionDescription!, error: NSError!) {
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        didCreateSessionDescription originalSdp: RTCSessionDescription!, error: Error!) {
         if error != nil {
             print("SDP OnFailure: \(error)")
             return
         }
-            
+        
         let sdp = RTCSessionDescription(
             type: originalSdp.type,
-            sdp: self.session.preferISAC(originalSdp.description)
+            sdp: self.session.preferISAC(sdpDescription: originalSdp.description)
         )
         
-        self.session.peerConnection.setLocalDescriptionWithDelegate(self, sessionDescription: sdp)
-            
-        dispatch_async(dispatch_get_main_queue()) {
+        self.session.peerConnection.setLocalDescriptionWith(self, sessionDescription: sdp)
+        
+        DispatchQueue.main.async {
             var jsonError: NSError?
             
-            let json: AnyObject = [
-                "type": sdp.type,
-                "sdp": sdp.description
+            let json = [
+                "type": sdp?.type,
+                "sdp": sdp?.description
             ]
             
-            let data: NSData?
+            let data: Data?
             do {
-                data = try NSJSONSerialization.dataWithJSONObject(json,
-                                options: NSJSONWritingOptions())
+                data = try JSONSerialization.data(withJSONObject: json,
+                                                  options: JSONSerialization.WritingOptions())
             } catch let error as NSError {
                 jsonError = error
                 data = nil
@@ -40,18 +40,18 @@ class SessionDescriptionDelegate : UIResponder, RTCSessionDescriptionDelegate {
                 fatalError()
             }
             
-            self.session.sendMessage(data!)
+            self.session.sendMessage(message: data!)
         }
     }
     
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        didSetSessionDescriptionWithError error: NSError!) {
+    func peerConnection(_ peerConnection: RTCPeerConnection!,
+                        didSetSessionDescriptionWithError error: Error!) {
         if error != nil {
             print("SDP OnFailure: \(error)")
             return
         }
-            
-        dispatch_async(dispatch_get_main_queue()) {
+        
+        DispatchQueue.main.async {
             if self.session.config.isInitiator {
                 if self.session.peerConnection.remoteDescription != nil {
                     print("SDP onSuccess - drain candidates")
@@ -61,8 +61,8 @@ class SessionDescriptionDelegate : UIResponder, RTCSessionDescriptionDelegate {
                 if self.session.peerConnection.localDescription != nil {
                     self.drainRemoteCandidates()
                 } else {
-                    self.session.peerConnection.createAnswerWithDelegate(self,
-                        constraints: self.session.constraints)
+                    self.session.peerConnection.createAnswer(with: self,
+                                                             constraints: self.session.constraints)
                 }
             }
         }
@@ -71,7 +71,7 @@ class SessionDescriptionDelegate : UIResponder, RTCSessionDescriptionDelegate {
     func drainRemoteCandidates() {
         if self.session.queuedRemoteCandidates != nil {
             for candidate in self.session.queuedRemoteCandidates! {
-                self.session.peerConnection.addICECandidate(candidate)
+                self.session.peerConnection.add(candidate)
             }
             self.session.queuedRemoteCandidates = nil
         }

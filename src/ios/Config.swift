@@ -5,20 +5,20 @@ class SessionConfig {
     var turn: TurnConfig
     var streams: StreamsConfig
     
-    init(data: AnyObject) {
-        self.isInitiator = data.objectForKey("isInitiator") as! Bool
+    init(data: [String:Any]) {
+        self.isInitiator = data["isInitiator"] as! Bool
         
-        let turnObject: AnyObject = data.objectForKey("turn")!
+        let turnObject = data["turn"] as! [String:Any]
         self.turn = TurnConfig(
-            host: turnObject.objectForKey("host") as! String,
-            username: turnObject.objectForKey("username") as! String,
-            password: turnObject.objectForKey("password") as! String
+            host: turnObject["host"] as! String,
+            username: turnObject["username"] as! String,
+            password: turnObject["password"] as! String
         )
         
-        let streamsObject: AnyObject = data.objectForKey("streams")!
+        let streamsObject = data["streams"] as! [String:Any]
         self.streams = StreamsConfig(
-            audio: streamsObject.objectForKey("audio") as! Bool,
-            video: streamsObject.objectForKey("video") as! Bool
+            audio: streamsObject["audio"] as! Bool,
+            video: streamsObject["video"] as! Bool
         )
     }
 }
@@ -39,13 +39,14 @@ class VideoConfig {
     var local: VideoLayoutParams?
     
     init(data: AnyObject) {
-        let containerParams: AnyObject = data.objectForKey("containerParams")!
-        let localParams: AnyObject? = data.objectForKey("local")
+        let data = data as! [String:Any]
+        let containerParams = data["containerParams"]
+        let localParams = data["local"]
         
-        self.container = VideoLayoutParams(data: containerParams)
+        self.container = VideoLayoutParams(data: containerParams as! [String : Any])
         
         if localParams != nil {
-            self.local = VideoLayoutParams(data: localParams!)
+            self.local = VideoLayoutParams(data: localParams! as! [String : Any])
         }
     }
 }
@@ -60,12 +61,12 @@ class VideoLayoutParams {
         self.height = height
     }
     
-    init(data: AnyObject) {
-        let position: [AnyObject] = data.objectForKey("position")! as! [AnyObject]
+    init(data: [String:Any]) {
+        let position: [AnyObject] = data["position"] as! [AnyObject]
         self.x = position[0] as! Int
         self.y = position[1] as! Int
         
-        let size: [AnyObject] = data.objectForKey("size")! as! [AnyObject]
+        let size: [AnyObject] = data["size"] as! [AnyObject]
         self.width = size[0] as! Int
         self.height = size[1] as! Int
     }
