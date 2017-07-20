@@ -24,7 +24,7 @@ class PhoneRTCPlugin : CDVPlugin {
         RTCPeerConnectionFactory.initializeSSL()
     }
     
-    func createSessionObject(command: CDVInvokedUrlCommand) {
+    func createSessionObject(_ command: CDVInvokedUrlCommand) {
         if let sessionKey = command.argument(at: 0) as? String {
             // create a session and initialize it.
             if let args = command.argument(at: 1) as? [String:Any] {
@@ -37,7 +37,7 @@ class PhoneRTCPlugin : CDVPlugin {
         }
     }
     
-    func call(command: CDVInvokedUrlCommand) {
+    func call(_ command: CDVInvokedUrlCommand) {
         let args = command.argument(at: 0) as! [String:Any]
         if let sessionKey = args["sessionKey"] as? String {
             DispatchQueue.main.async {
@@ -48,7 +48,7 @@ class PhoneRTCPlugin : CDVPlugin {
         }
     }
     
-    func receiveMessage(command: CDVInvokedUrlCommand) {
+    func receiveMessage(_ command: CDVInvokedUrlCommand) {
         let args = command.argument(at: 0) as! [String:Any]
         if let sessionKey = args["sessionKey"] as? String {
             if let message = args["message"] as? String {
@@ -61,7 +61,7 @@ class PhoneRTCPlugin : CDVPlugin {
         }
     }
     
-    func renegotiate(command: CDVInvokedUrlCommand) {
+    func renegotiate(_ command: CDVInvokedUrlCommand) {
         let args = command.argument(at: 0) as! [String:Any]
         if let sessionKey = args["sessionKey"] as? String {
             if let config = args["config"] {
@@ -75,7 +75,7 @@ class PhoneRTCPlugin : CDVPlugin {
         }
     }
     
-    func disconnect(command: CDVInvokedUrlCommand) {
+    func disconnect(_ command: CDVInvokedUrlCommand) {
         let args = command.argument(at: 0) as! [String:Any]
         if let sessionKey = args["sessionKey"] as? String {
             DispatchQueue.global().async() {
@@ -96,7 +96,7 @@ class PhoneRTCPlugin : CDVPlugin {
         self.commandDelegate!.send(pluginResult, callbackId:callbackId)
     }
     
-    func setVideoView(command: CDVInvokedUrlCommand) {
+    func setVideoView(_ command: CDVInvokedUrlCommand) {
         let config: AnyObject = command.argument(at: 0) as AnyObject
         
         /*DispatchQueue.main.async {
@@ -150,7 +150,7 @@ class PhoneRTCPlugin : CDVPlugin {
          }*/
     }
     
-    func hideVideoView(command: CDVInvokedUrlCommand) {
+    func hideVideoView(_ command: CDVInvokedUrlCommand) {
         DispatchQueue.main.async {
             if (self.localVideoView != nil) {
                 self.localVideoView!.isHidden = true;
@@ -161,7 +161,7 @@ class PhoneRTCPlugin : CDVPlugin {
         }
     }
     
-    func showVideoView(command: CDVInvokedUrlCommand) {
+    func showVideoView(_ command: CDVInvokedUrlCommand) {
         DispatchQueue.main.async {
             if (self.localVideoView != nil) {
                 self.localVideoView!.isHidden = false;

@@ -43,6 +43,10 @@ In order to install PhoneRTC on iOS, please follow these steps:
 				<param name="ios-package" value="PhoneRTCPlugin" />
 			</feature>
 		</config-file>
+        
+        <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
+            <string>${EXECUTABLE_NAME} Would Like to Use Your Microphone for calls.</string>
+        </config-file>
 
 		<header-file src="src/ios/RTCAudioSource.h" />
 		<header-file src="src/ios/RTCAudioTrack.h" />	
