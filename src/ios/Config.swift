@@ -38,8 +38,8 @@ class VideoConfig {
     var container: VideoLayoutParams
     var local: VideoLayoutParams?
     
-    init(data: AnyObject) {
-        let data = data as! [String:Any]
+    init(data: [String:Any]) {
+        let data = data
         let containerParams = data["containerParams"]
         let localParams = data["local"]
         

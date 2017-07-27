@@ -97,11 +97,11 @@ class PhoneRTCPlugin : CDVPlugin {
     }
     
     func setVideoView(_ command: CDVInvokedUrlCommand) {
-        let config: AnyObject = command.argument(at: 0) as AnyObject
+        let config = command.argument(at: 0) as! [String:Any]
         
-        /*DispatchQueue.main.async {
+        DispatchQueue.main.async {
          // create session config from the JS params
-         let videoConfig = VideoConfig(data: config)
+        let videoConfig = VideoConfig(data: config)
          
          // make sure that it's not junk
          if videoConfig.container.width == 0 || videoConfig.container.height == 0 {
@@ -111,43 +111,42 @@ class PhoneRTCPlugin : CDVPlugin {
          self.videoConfig = videoConfig
          
          // get cameraParams from the JS params
-         self.camera = config.object("camera") as? String
+         self.camera = config["camera"] as? String
          
          // add local video view
          if self.videoConfig!.local != nil {
-         if self.localVideoTrack == nil {
-         if(self.camera == "Front" || self.camera == "Back") {
-         self.initLocalVideoTrack(camera: self.camera!)
-         }else {
-         self.initLocalVideoTrack()
-         }
-         }
+            if self.localVideoTrack == nil {
+                if(self.camera == "Front" || self.camera == "Back") {
+                    self.initLocalVideoTrack(camera: self.camera!)
+                }else {
+                    self.initLocalVideoTrack()
+                }
+            }
          
-         if self.videoConfig!.local == nil {
+            if self.videoConfig!.local == nil {
          // remove the local video view if it exists and
          // the new config doesn't have the `local` property
-         if self.localVideoView != nil {
-         self.localVideoView!.isHidden = true
-         self.localVideoView!.removeFromSuperview()
-         self.localVideoView = nil
-         }
-         } else {
-         let params = self.videoConfig!.local!
+                if self.localVideoView != nil {
+                    self.localVideoView!.isHidden = true
+                    self.localVideoView!.removeFromSuperview()
+                    self.localVideoView = nil
+                }
+            } else {
+                let params = self.videoConfig!.local!
          
          // if the local video view already exists, just
          // change its position according to the new config.
-         if self.localVideoView != nil {
-         self.localVideoView!.frame = CGRect(x: CGFloat(params.x + self.videoConfig!.container.x), y: CGFloat(params.y + self.videoConfig!.container.y), width: CGFloat(params.width), height: CGFloat(params.height))
-         } else {
+                if self.localVideoView != nil {
+                    self.localVideoView!.frame = CGRect(x: CGFloat(params.x + self.videoConfig!.container.x), y: CGFloat(params.y + self.videoConfig!.container.y), width: CGFloat(params.width), height: CGFloat(params.height))
+                } else {
          // otherwise, create the local video view
-         self.localVideoView = self.createVideoView(params: params)
-         self.localVideoTrack!.add(self.localVideoView!)
-         }
-         }
-         
-         self.refreshVideoContainer()
-         }
-         }*/
+                    self.localVideoView = self.createVideoView(params: params)
+                    self.localVideoTrack!.add(self.localVideoView!)
+                }
+            }
+            self.refreshVideoContainer()
+        }
+        }
     }
     
     func hideVideoView(_ command: CDVInvokedUrlCommand) {
